@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portik - Forum</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .flash-message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .flash-success {
+            background-color: #4ade80;
+            color: #1a2e05;
+        }
+        .flash-error {
+            background-color: #f87171;
+            color: #450a0a;
+        }
+        .post {
+            background-color: #1f2937;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/60" alt="Portik Logo">
+                <h1 class="ml-4">Portik</h1>
+            </div>
+            <div class="nav">
+                <a href="/">Home</a>
+                <a href="/forum">Forum</a>
+                <a href="/upload">Upload Addon</a>
+                <a href="/shop">Shop</a>
+                <a href="/messages">Messages</a>
+                <a href="/about">About</a>
+                <a href="/language/en">EN</a>
+                {% if user %}
+                    <a href="/profile/{{ user }}"><span class="tag">{{ user }}</span></a>
+                    <a href="/admin">Admin Panel</a>
+                    <a class="logout-btn" href="/logout">Logout</a>
+                {% else %}
+                    <a href="/login">Login</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="table-container">
+            <div class="modal-content">
+                <h2>Forum</h2>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <p class="flash-message flash-{{ 'success' if category == 'success' else 'error' }}">{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                {% if user %}
+                    <form method="POST" action="/forum">
+                        <textarea name="content" class="w-full p-2 mb-2 bg-gray-800 rounded" placeholder="Write your post..." required maxlength="1000"></textarea>
+                        <button type="submit" class="submit-btn">Submit</button>
+                    </form>
+                {% else %}
+                    <p>Please <a href="/login">login</a> to post on the forum.</p>
+                {% endif %}
+                <div class="posts">
+                    {% for post in posts %}
+                        <div class="post">
+                            <div class="flex items-center mb-2">
+                                <img src="/static/uploads/{{ post[3] }}" alt="Avatar" class="w-10 h-10 rounded-full mr-2">
+                                <a href="/profile/{{ post[0] }}">{{ post[0] }}</a>
+                                {% if post[4] %}
+                                    <span class="tag">{{ post[4] }}</span>
+                                {% endif %}
+                                {% for badge in post[5] %}
+                                    <span class="badge" style="background-color: {{ badge[2] }}">{{ badge[0] }}</span>
+                                {% endfor %}
+                                {% for shop_badge in post[6] %}
+                                    {% if shop_badge[2] %}
+                                        <img src="/static/uploads/{{ shop_badge[2] }}" alt="{{ shop_badge[0] }}" class="badge-image">
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <p>{{ post[1] }}</p>
+                            <p class="text-gray-500 text-sm">{{ post[2] }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            Portik Community | © 2025
+        </div>
+    </div>
+</body>
+</html>

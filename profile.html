@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portik - {{ user_data[0] }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .flash-message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .flash-success {
+            background-color: #4ade80;
+            color: #1a2e05;
+        }
+        .flash-error {
+            background-color: #f87171;
+            color: #450a0a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/60" alt="Portik Logo">
+                <h1 class="ml-4">Portik</h1>
+            </div>
+            <div class="nav">
+                <a href="{{ url_for('index') }}">{{ 'Home' if lang == 'en' else 'Главная' }}</a>
+                <a href="{{ url_for('forum') }}">{{ 'Forum' if lang == 'en' else 'Форум' }}</a>
+                <a href="{{ url_for('upload') }}">{{ 'Upload Addon' if lang == 'en' else 'Загрузить аддон' }}</a>
+                <a href="{{ url_for('shop') }}">{{ 'Shop' if lang == 'en' else 'Магазин' }}</a>
+                <a href="{{ url_for('messages') }}">{{ 'Messages' if lang == 'en' else 'Сообщения' }}</a>
+                <a href="{{ url_for('about') }}">{{ 'About' if lang == 'en' else 'О нас' }}</a>
+                <a href="{{ url_for('switch_language', lang='en' if lang == 'ru' else 'ru') }}">
+                    {{ 'EN' if lang == 'ru' else 'RU' }}
+                </a>
+                {% if current_user %}
+                    <a href="{{ url_for('profile', username=current_user) }}"><span class="tag">{{ current_user }}</span></a>
+                    {% if current_user == 'PTK' %}
+                        <a href="{{ url_for('admin') }}">{{ 'Admin Panel' if lang == 'en' else 'Админ-панель' }}</a>
+                    {% endif %}
+                    <a class="register-btn" href="{{ url_for('logout') }}">{{ 'Logout' if lang == 'en' else 'Выйти' }}</a>
+                {% else %}
+                    <a class="register-btn" href="{{ url_for('login') }}">{{ 'Login' if lang == 'en' else 'Войти' }}</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="table-container">
+            <div class="modal-content">
+                <h2>{{ user_data[0] }}'s {{ 'Profile' if lang == 'en' else 'Профиль' }}</h2>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <p class="flash-message flash-{{ 'success' if category == 'success' else 'error' }}">{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <div class="flex items-center mb-4">
+                    <img src="{{ url_for('static', filename='uploads/' + user_data[1]) }}" alt="Avatar" class="w-16 h-16 rounded-full mr-4">
+                    <div>
+                        <h3 class="text-xl">{{ user_data[0] }}</h3>
+                        {% if user_data[2] %}
+                            <span class="tag">{{ user_data[2] }}</span>
+                        {% endif %}
+                        <p>{{ 'Balance' if lang == 'en' else 'Баланс' }}: {{ user_data[3] }} Portik Coins</p>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <h4>{{ 'Badges' if lang == 'en' else 'Бейджи' }}</h4>
+                    {% for badge in user_data[4] %}
+                        <span class="badge" style="background-color: {{ badge[2] }};" title="{{ badge[1] }}">{{ badge[0] }}</span>
+                    {% endfor %}
+                    {% for badge in user_data[5] %}
+                        {% if badge[2] %}
+                            <img src="{{ url_for('static', filename='uploads/' + badge[2]) }}" alt="{{ badge[0] }}" class="badge-image" title="{{ badge[1] }}">
+                        {% else %}
+                            <span class="badge shop-badge" title="{{ badge[1] }}">{{ badge[0] }}</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% if user_data[6] %}
+                    <div class="mb-4">
+                        <h4>{{ 'Warnings' if lang == 'en' else 'Предупреждения' }}</h4>
+                        <ul>
+                            {% for warning in user_data[6] %}
+                                <li>{{ warning[0] }} ({{ warning[1] }})</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                {% if current_user == user_data[0] %}
+                    <h4>{{ 'Edit Profile' if lang == 'en' else 'Редактировать профиль' }}</h4>
+                    <form method="POST" enctype="multipart/form-data" action="{{ url_for('profile', username=user_data[0]) }}">
+                        <input type="text" name="custom_tag" class="w-full p-2 mb-2 bg-gray-800 rounded" placeholder="{{ 'Custom Tag' if lang == 'en' else 'Пользовательский тег' }}" value="{{ user_data[2] }}" maxlength="50">
+                        <input type="file" name="avatar" class="w-full p-2 mb-2 bg-gray-800 rounded" accept=".png,.jpg,.jpeg,.gif">
+                        <button type="submit" class="register-btn">{{ 'Save' if lang == 'en' else 'Сохранить' }}</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        <div class="footer">
+            Portik Community | © 2025
+        </div>
+    </div>
+</body>
+</html>

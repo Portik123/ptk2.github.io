@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portik - About</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/60" alt="Portik Logo">
+                <h1 class="ml-4">Portik - About</h1>
+            </div>
+            <div class="nav">
+                <a href="{{ url_for('index') }}">{{ 'Home' if lang == 'en' else 'Главная' }}</a>
+                <a href="{{ url_for('forum') }}">{{ 'Forum' if lang == 'en' else 'Форум' }}</a>
+                <a href="{{ url_for('upload') }}">{{ 'Upload Addon' if lang == 'en' else 'Загрузить аддон' }}</a>
+                <a href="{{ url_for('shop') }}">{{ 'Shop' if lang == 'en' else 'Магазин' }}</a>
+                <a href="{{ url_for('messages') }}">{{ 'Messages' if lang == 'en' else 'Сообщения' }}</a>
+                <a href="{{ url_for('about') }}">{{ 'About' if lang == 'en' else 'О нас' }}</a>
+                <a href="{{ url_for('switch_language', lang='en' if lang == 'ru' else 'ru') }}">
+                    {{ 'EN' if lang == 'ru' else 'RU' }}
+                </a>
+                {% if user %}
+                    <a href="{{ url_for('profile', username=user) }}"><span class="tag">{{ user }}</span></a>
+                    {% if user == 'PTK' %}
+                        <a href="{{ url_for('admin') }}">{{ 'Admin Panel' if lang == 'en' else 'Админ-панель' }}</a>
+                    {% endif %}
+                    <a class="register-btn" href="{{ url_for('logout') }}">{{ 'Logout' if lang == 'en' else 'Выйти' }}</a>
+                {% else %}
+                    <a class="register-btn" href="{{ url_for('login') }}">{{ 'Login' if lang == 'en' else 'Войти' }}</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="table-container">
+            <h2 class="text-2xl font-bold mb-4">{{ 'About Portik' if lang == 'en' else 'О Portik' }}</h2>
+            <p class="text-gray-500 mb-4">
+                {{ 'Portik is a community for Garry\'s Mod fans where you can share addons, discuss them, and connect with like-minded players. Inspired by Steam, Discord, and Telegram, we aim to provide a unique and stylish experience.' if lang == 'en' else 
+                   'Portik — это сообщество для фанатов Garry\'s Mod, где вы можете делиться аддонами, обсуждать их и находить единомышленников. Мы вдохновлены Steam, Discord и Telegram, чтобы создать уникальный и стильный опыт.' }}
+            </p>
+            <p class="text-gray-600">
+                {{ 'Join us to upload links, customize your profile, chat in private messages, and participate in forum discussions!' if lang == 'en' else 
+                   'Присоединяйтесь, чтобы загружать ссылки, настраивать профиль, общаться в личных сообщениях и участвовать в обсуждениях на нашем форуме!' }}
+            </p>
+        </div>
+        <div class="footer">
+            Portik Community | © 2025
+        </div>
+    </div>
+</body>
+</html>

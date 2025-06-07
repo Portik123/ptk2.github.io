@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portik - Ошибка</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/60" alt="Portik Logo">
+                <h1 class="ml-4">Portik - Ошибка</h1>
+            </div>
+            <div class="nav">
+                <a href="{{ url_for('index') }}">Главная</a>
+                <a href="{{ url_for('forum') }}">Форум</a>
+                <a href="{{ url_for('upload') }}">Загрузить аддон</a>
+                <a href="{{ url_for('messages') }}">Сообщения</a>
+                <a href="{{ url_for('about') }}">О нас</a>
+                {% if user %}
+                    <a href="{{ url_for('profile', username=user) }}"><span class="tag">{{ user }}</span></a>
+                    <a class="register-btn" href="{{ url_for('logout') }}">Выйти</a>
+                {% else %}
+                    <a class="register-btn" href="{{ url_for('login') }}">Войти</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="table-container">
+            <div class="modal-content">
+                <h2>Ошибка</h2>
+                <p class="text-red-400">{{ message }}</p>
+                <a href="{{ url_for('index') }}" class="register-btn mt-4">Вернуться на главную</a>
+            </div>
+        </div>
+        <div class="footer">
+            Portik Community | © 2025
+        </div>
+    </div>
+</body>
+</html>

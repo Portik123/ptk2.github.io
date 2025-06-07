@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portik - Вход в админ-панель</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/60" alt="Portik Logo">
+                <h1 class="ml-4">Portik - Админ-панель</h1>
+            </div>
+            <div class="nav">
+                <a href="{{ url_for('index') }}">Главная</a>
+            </div>
+        </div>
+        <div class="table-container">
+            <div class="modal-content">
+                <h2>{% if show_register %}Регистрация админа{% else %}Вход в админ-панель{% endif %}</h2>
+                {% if message %}
+                    <p class="text-green-400 mb-4">{{ message }}</p>
+                {% endif %}
+                {% if error %}
+                    <p class="text-red-400 mb-4">{{ error }}</p>
+                {% endif %}
+                <form method="POST" action="{{ url_for('admin_register') if show_register else url_for('admin_login') }}">
+                    <input type="text" name="username" placeholder="Имя пользователя" class="w-full p-2 mb-4 bg-gray-800 rounded" required>
+                    <input type="password" name="password" placeholder="Пароль" class="w-full p-2 mb-4 bg-gray-800 rounded" required>
+                    <button type="submit" class="register-btn">
+                        {% if show_register %}Зарегистрироваться{% else %}Войти{% endif %}
+                    </button>
+                </form>
+                {% if not show_register %}
+                    <a href="{{ url_for('admin_register') }}" class="text-blue-400 hover:text-blue-600 mt-2 block">Регистрация (только для PTK)</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="footer">
+            Portik Community | © 2025
+        </div>
+    </div>
+</body>
+</html>
