@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portik - {{ 'Messages' if lang == 'en' else 'Сообщения' }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .flash-message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .flash-success {
+            background-color: #4ade80;
+            color: #1a2e05;
+        }
+        .flash-error {
+            background-color: #f87171;
+            color: #450a0a;
+        }
+        .chat-container {
+            display: flex;
+            height: 70vh;
+        }
+        .contacts {
+            width: 30%;
+            border-right: 1px solid #4b5563;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .messages {
+            width: 70%;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+        }
+        .message.sent {
+            background-color: #2563eb;
+            margin-left: 20%;
+            color: white;
+        }
+        .message.received {
+            background-color: #4b5563;
+            margin-right: 20%;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/60" alt="Portik Logo">
+                <h1 class="ml-4">Portik</h1>
+            </div>
+            <div class="nav">
+                <a href="{{ url_for('index') }}">{{ 'Home' if lang == 'en' else 'Главная' }}</a>
+                <a href="{{ url_for('forum') }}">{{ 'Forum' if lang == 'en' else 'Форум' }}</a>
+                <a href="{{ url_for('upload') }}">{{ 'Upload Addon' if lang == 'en' else 'Загрузить аддон' }}</a>
+                <a href="{{ url_for('shop') }}">{{ 'Shop' if lang == 'en' else 'Магазин' }}</a>
+                <a href="{{ url_for('messages') }}">{{ 'Messages' if lang == 'en' else 'Сообщения' }}</a>
+                <a href="{{ url_for('about') }}">{{ 'About' if lang == 'en' else 'О нас' }}</a>
+                <a href="{{ url_for('switch_language', lang='en' if lang == 'ru' else 'ru') }}">
+                    {{ 'EN' if lang == 'ru' else 'RU' }}
+                </a>
+                <a href="{{ url_for('profile', username=user) }}"><span class="tag">{{ user }}</span></a>
+                {% if user == 'PTK' %}
+                    <a href="{{ url_for('admin') }}">{{ 'Admin Panel' if lang == 'en' else 'Админ-панель' }}</a>
+                {% endif %}
+                <a class="register-btn" href="{{ url_for('logout') }}">{{ 'Logout' if lang == 'en' else 'Выйти' }}</a>
+            </div>
+        </div>
+        <div class="table-container">
+            <div class="modal-content">
+                <h2>{{ 'Messages' if lang == 'en' else 'Сообщения' }}</h2>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <p class="flash-message flash-{{ 'success' if category == 'success' else 'error' }}">{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <div class="chat-container">
+                    <div class="contacts">
+                        <h3>{{ 'Contacts' if lang == 'en' else 'Контакты' }}</h3>
+                        {% for contact in contacts %}
+                            <a href="{{ url_for('messages', receiver=contact) }}" class="block p-2 mb-2 bg-gray-800 rounded {{ 'bg-blue-600' if contact == receiver else '' }}">{{ contact }}</a>
+                        {% endfor %}
+                        <h3>{{ 'All Users' if lang == 'en' else 'Все пользователи' }}</h3>
+                        {% for u in all_users %}
+                            {% if u not in contacts %}
+                                <a href="{{ url_for('messages', receiver=u) }}" class="block p-2 mb-2 bg-gray-800 rounded {{ 'bg-blue-600' if u == receiver else '' }}">{{ u }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="messages">
+                        {% if receiver %}
+                            <h3>{{ 'Chat with' if lang == 'en' else 'Чат с' }} {{ receiver }}</h3>
+                            {% for msg in messages %}
+                                <div class="message {{ 'sent' if msg[0] == user else 'received' }}">
+                                    <div class="flex items-center mb-1">
+                                        <img src="{{ url_for('static', filename='uploads/' + msg[3]) }}" alt="Avatar" class="w-6 h-6 rounded-full mr-2">
+                                        <span class="text-blue-400">{{ msg[0] }}</span>
+                                        {% if msg[4] %}
+                                            <span class="tag">{{ msg[4] }}</span>
+                                        {% endif %}
+                                        {% for badge in msg[5] %}
+                                            <span class="badge" style="background-color: {{ badge[2] }};" title="{{ badge[1] }}">{{ badge[0] }}</span>
+                                        {% endfor %}
+                                        {% for badge in msg[6] %}
+                                            {% if badge[2] %}
+                                                <img src="{{ url_for('static', filename='uploads/' + badge[2]) }}" alt="{{ badge[0] }}" class="badge-image" title="{{ badge[1] }}">
+                                            {% else %}
+                                                <span class="badge shop-badge" title="{{ badge[1] }}">{{ badge[0] }}</span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <p>{{ msg[1] }}</p>
+                                    <p class="text-gray-500 text-sm">{{ msg[2] }}</p>
+                                </div>
+                            {% endfor %}
+                            <form method="POST" action="{{ url_for('messages', receiver=receiver) }}">
+                                <textarea name="content" class="w-full p-2 mb-2 bg-gray-800 rounded" placeholder="{{ 'Type your message...' if lang == 'en' else 'Введите ваше сообщение...' }}" required></textarea>
+                                <button type="submit" class="register-btn">{{ 'Send' if lang == 'en' else 'Отправить' }}</button>
+                            </form>
+                        {% else %}
+                            <p>{{ 'Select a contact to start chatting' if lang == 'en' else 'Выберите контакт, чтобы начать чат' }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            Portik Community | © 2025
+        </div>
+    </div>
+</body>
+</html>

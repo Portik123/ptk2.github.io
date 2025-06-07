@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portik - Загрузить аддон</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/60" alt="Portik Logo">
+                <h1 class="ml-4">Portik - Загрузка аддона</h1>
+            </div>
+            <div class="nav">
+                <a href="{{ url_for('index') }}">Главная</a>
+                <a href="{{ url_for('forum') }}">Форум</a>
+                <a href="{{ url_for('upload') }}">Загрузить аддон</a>
+                <a href="{{ url_for('messages') }}">Сообщения</a>
+                <a href="{{ url_for('about') }}">О нас</a>
+                {% if user %}
+                    <a href="{{ url_for('profile', username=user) }}"><span class="tag">{{ user }}</span></a>
+                    <a class="register-btn" href="{{ url_for('logout') }}">Выйти</a>
+                {% else %}
+                    <a class="register-btn" href="{{ url_for('login') }}">Войти</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="table-container">
+            <div class="modal-content">
+                <h2>Загрузить новый аддон</h2>
+                {% if message %}
+                    <p class="text-green-400">{{ message }}</p>
+                {% endif %}
+                <form method="POST">
+                    <input type="text" name="title" placeholder="Название аддона" class="w-full p-2 mb-4 bg-gray-800 rounded" required>
+                    <input type="url" name="link" placeholder="Ссылка на аддон" class="w-full p-2 mb-4 bg-gray-800 rounded" required>
+                    <select name="type" class="w-full p-2 mb-4 bg-gray-800 rounded" required>
+                        <option value="File">Файл</option>
+                        <option value="Folder">Папка</option>
+                    </select>
+                    <input type="text" name="tags" placeholder="Теги (через запятую)" class="w-full p-2 mb-4 bg-gray-800 rounded">
+                    <button type="submit" class="register-btn">Загрузить</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer">
+            Portik Community | © 2025
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portik - Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/60" alt="Portik Logo">
+                <h1 class="ml-4">Portik - Shop</h1>
+            </div>
+            <div class="nav">
+                <a href="{{ url_for('index') }}">{{ 'Home' if lang == 'en' else 'Главная' }}</a>
+                <a href="{{ url_for('forum') }}">{{ 'Forum' if lang == 'en' else 'Форум' }}</a>
+                <a href="{{ url_for('upload') }}">{{ 'Upload Addon' if lang == 'en' else 'Загрузить аддон' }}</a>
+                <a href="{{ url_for('shop') }}">{{ 'Shop' if lang == 'en' else 'Магазин' }}</a>
+                <a href="{{ url_for('messages') }}">{{ 'Messages' if lang == 'en' else 'Сообщения' }}</a>
+                <a href="{{ url_for('about') }}">{{ 'About' if lang == 'en' else 'О нас' }}</a>
+                <a href="{{ url_for('switch_language', lang='en' if lang == 'ru' else 'ru') }}">
+                    {{ 'EN' if lang == 'ru' else 'RU' }}
+                </a>
+                {% if user %}
+                    <a href="{{ url_for('profile', username=user) }}"><span class="tag">{{ user }}</span></a>
+                    {% if user == 'PTK' %}
+                        <a href="{{ url_for('admin') }}">{{ 'Admin Panel' if lang == 'en' else 'Админ-панель' }}</a>
+                    {% endif %}
+                    <a class="register-btn" href="{{ url_for('logout') }}">{{ 'Logout' if lang == 'en' else 'Выйти' }}</a>
+                {% else %}
+                    <a class="register-btn" href="{{ url_for('login') }}">{{ 'Login' if lang == 'en' else 'Войти' }}</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="table-container">
+            <div class="modal-content">
+                <h2>{{ 'Badge Shop' if lang == 'en' else 'Магазин бейджей' }}</h2>
+                <p class="text-gray-500 mb-4">{{ 'Your Balance' if lang == 'en' else 'Ваш баланс' }}: {{ balance }} Portik Coins</p>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <p class="text-{{ 'green-400' if category == 'success' else 'red-400' }}">{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for badge in badges %}
+                        <div class="bg-gray-800 p-4 rounded">
+                            {% if badge[4] %}
+                                <img src="{{ url_for('static', filename='uploads/' + badge[4]) }}" alt="{{ badge[1] }}" class="badge-image mb-2 mx-auto">
+                            {% else %}
+                                <span class="badge shop-badge block text-center mb-2">{{ badge[1] }}</span>
+                            {% endif %}
+                            <h3 class="text-lg font-bold">{{ badge[1] or ('Image Badge' if lang == 'en' else 'Бейдж с изображением') }}</h3>
+                            <p class="text-gray-400">{{ badge[2] }}</p>
+                            <p class="text-gray-500">{{ badge[3] }} Portik Coins</p>
+                            <form method="POST">
+                                <input type="hidden" name="badge_id" value="{{ badge[0] }}">
+                                <button type="submit" class="register-btn mt-2 w-full">{{ 'Buy' if lang == 'en' else 'Купить' }}</button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            Portik Community | © 2025
+        </div>
+    </div>
+</body>
+</html>
