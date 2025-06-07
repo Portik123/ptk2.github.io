@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portik - Garry's Mod Addons</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/60" alt="Portik Logo">
+                <h1 class="ml-4">Portik - GMod Community</h1>
+            </div>
+            <div class="nav">
+                <a href="{{ url_for('index') }}">{{ 'Home' if lang == 'en' else 'Главная' }}</a>
+                <a href="{{ url_for('forum') }}">{{ 'Forum' if lang == 'en' else 'Форум' }}</a>
+                <a href="{{ url_for('upload') }}">{{ 'Upload Addon' if lang == 'en' else 'Загрузить аддон' }}</a>
+                <a href="{{ url_for('shop') }}">{{ 'Shop' if lang == 'en' else 'Магазин' }}</a>
+                <a href="{{ url_for('messages') }}">{{ 'Messages' if lang == 'en' else 'Сообщения' }}</a>
+                <a href="{{ url_for('about') }}">{{ 'About' if lang == 'en' else 'О нас' }}</a>
+                <a href="{{ url_for('switch_language', lang='en' if lang == 'ru' else 'ru') }}">
+                    {{ 'EN' if lang == 'ru' else 'RU' }}
+                </a>
+                {% if user %}
+                    <a href="{{ url_for('profile', username=user) }}"><span class="tag">{{ user }}</span></a>
+                    {% if user == 'PTK' %}
+                        <a href="{{ url_for('admin') }}">{{ 'Admin Panel' if lang == 'en' else 'Админ-панель' }}</a>
+                    {% endif %}
+                    <a class="register-btn" href="{{ url_for('logout') }}">{{ 'Logout' if lang == 'en' else 'Выйти' }}</a>
+                {% else %}
+                    <a class="register-btn" href="{{ url_for('login') }}">{{ 'Login' if lang == 'en' else 'Войти' }}</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="table-container">
+            <h2 class="text-2xl font-bold mb-4">{{ 'List of Addons' if lang == 'en' else 'Список аддонов' }}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>{{ 'Title' if lang == 'en' else 'Название' }}</th>
+                        <th>{{ 'Link' if lang == 'en' else 'Ссылка' }}</th>
+                        <th>{{ 'Type' if lang == 'en' else 'Тип' }}</th>
+                        <th>{{ 'Tags' if lang == 'en' else 'Теги' }}</th>
+                    </tr>
+                </thead>
+                <tbody id="addonTable">
+                    {% for addon in addons %}
+                        <tr>
+                            <td><span class="tag {% if addon[2] == 'Folder' %}tag-folder{% endif %}">[{{ addon[2] }}]</span> {{ addon[0] }}</td>
+                            <td><a href="{{ addon[1] }}" target="_blank">{{ 'Open Link' if lang == 'en' else 'Открыть ссылку' }}</a></td>
+                            <td class="type-{{ addon[2].lower() }}">{{ addon[2] }}</td>
+                            <td>{{ addon[3] or ('No tags' if lang == 'en' else 'Нет тегов') }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="footer">
+            Portik Community | Created for Garry's Mod fans | © 2025
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+    <script>
+        fetchAddons();
+    </script>
+</body>
+</html>
