@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portik - Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .flash-message {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .flash-success {
+            background-color: #4ade80;
+            color: #1e3a08;
+        }
+        .flash-error {
+            background-color: #f87171;
+            color: #450a0a;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #1f2937;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/60" alt="Portik Logo">
+                <h1 class="ml-4">Portik</h1>
+            </div>
+            <div class="nav">
+                <a href="/">Home</a>
+                <a href="/forum">Forum</a>
+                <a href="/upload">Upload Addon</a>
+                <a href="/shop">Shop</a>
+                <a href="/messages">Messages</a>
+                <a href="/about">About</a>
+                <a href="/language/en">EN</a>
+                <a href="/profile/user"><span class="tag">user</span></a>
+                <a href="/admin">Admin Panel</a>
+                <a class="logout-btn" href="/admin/logout">Logout</a>
+            </div>
+        </div>
+        <div class="table-container">
+            <div class="modal-content">
+                <h2>Admin Panel</h2>
+                <!-- Flash messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <p class="flash-message flash-{{ 'success' if category == 'success' else 'error' }}">{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Create Custom Badge -->
+                <div class="section">
+                    <h3>Create Custom Badge</h3>
+                    <form method="POST" action="/admin">
+                        <input type="hidden" name="action" value="create_badge">
+                        <input type="text" name="name" class="w-full p-2 mb-2 bg-gray-800 rounded" placeholder="Badge Name" required maxlength="50">
+                        <textarea name="description" class="w-full p-2 mb-2 bg-gray-800 rounded" placeholder="Description" required maxlength="250"></textarea>
+                        <input type="color" name="color" class="w-full p-2 mb-2 bg-gray-800 rounded" value="#555555">
+                        <button type="submit" class="submit-btn">Create</button>
+                    </form>
+                </div>
+
+                <!-- Create Shop Badge -->
+                <div class="section">
+                    <h3>Create Shop Badge</h3>
+                    <form method="POST" enctype="multipart/form-data" action="/admin">
+                        <input type="hidden" name="action" value="create_shop_badge">
+                        <input type="text" name="name" class="w-full p-2 mb-2 bg-gray-800 rounded" placeholder="Badge Name (optional)" maxlength="50">
+                        <textarea name="description" class="w-full p-2 mb-2 bg-gray-800 rounded" placeholder="Description" required maxlength="100"></textarea>
+                        <input type="number" name="price" class="w-full p-2 mb-2 bg-gray-800 rounded" placeholder="Price" required min="0">
+                        <input type="file" name="image" class="w-full p-2 mb-2 bg-gray-800 rounded" accept=".png,.jpg,.jpeg,.png">
+                        <button type="submit" class="submit-btn">Create</button>
+                    </form>
+                </div>
+
+                <!-- Manage Custom Badges -->
+                <div class="section">
+                    <h3>Manage Custom Badges</h3>
+                    {% for badge in badges %}
+                        <div class="flex items-center justify-between mb-2 p-2 bg-gray-800 rounded">
+                            <span class="badge" style="background-color: {{ badge[3] }}">{{ badge[1] }} ({{ badge[2] }})</span>
+                            <form method="POST" action="/admin" class="inline">
+                                <input type="hidden" name="action" value="delete_badge">
+                                <input type="hidden" name="badge_id" value="{{ badge[0] }}">
+                                <button type="submit" class="delete-btn">Delete</button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Manage Shop Badges -->
+                <div class="section">
+                    <h3>Manage Shop Badges</h3>
+                    {% for badge in shop_badges %}
+                        <div class="flex items-center justify-between mb-2 p-2 bg-gray-800 rounded">
+                            <div>
+                                {% if badge[4] %}
+                                    <img src="/static/uploads/{{ badge[4] }}" alt="{{ badge[1] }}" class="badge-image inline-block" style="max-width: 40px;">
+                                {% endif %}
+                                {{ badge[1] }} ({{ badge[2] }}) - {{ badge[3] }} Coins
+                            </div>
+                            <form method="POST" action="/admin" class="inline">
+                                <input type="hidden" name="action" value="delete_shop_badge">
+                                <input type="hidden" name="badge_id" value="{{ badge[0] }}">
+                                <button type="submit" class="delete-btn">Delete</button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Assign/Remove Badges -->
+                <div class="section">
+                    <h3>Assign/Remove Badges</h3>
+                    {% for ub in user_badges %}
+                        <div class="mb-2 p-2 bg-gray-800 rounded">
+                            <p><strong>{{ ub[1] }}</strong></p>
+                            <div class="flex items-center mb-2">
+                                {% for b in ub[2] %}
+                                    <span class="badge">{{ b[0] }}</span>
+                                {% endfor %}
+                            </div>
+                            <form method="POST" action="/admin" class="mb-2">
+                                <input type="hidden" name="action" value="assign_badge">
+                                <input type="hidden" name="user_id" value="{{ ub[0] }}">
+                                <select name="badge_id" class="p-2 bg-gray-800 rounded">
+                                    {% for badge in badges %}
+                                        <option value="{{ badge[0] }}">{{ badge[1] }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="submit-btn">Assign</button>
+                            </form>
+                            {% for b in ub[2] %}
+                                <form method="POST" action="/admin" class="inline">
+                                    <input type="hidden" name="action" value="remove_badge">
+                                    <input type="hidden" name="user_id" value="{{ ub[0] }}">
+                                    <input type="hidden" name="badge_id" value="{{ b[1] }}">
+                                    <button type="submit" class="delete-btn">Remove</button>
+                                </form>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Manage Warnings and Bans -->
+                <div class="section">
+                    <h3>Manage Warnings and Bans</h3>
+                    {% for u in user_status %}
+                        <div class="mb-4 p-2 bg-gray-800 rounded">
+                            <p><strong>{{ u[1] }}</strong></p>
+                            <p>Warnings:</p>
+                            <ul>
+                                {% for w in u[2] %}
+                                    <li>{{ w[0] }} ({{ w[1] }})</li>
+                                {% endfor %}
+                            </ul>
+                            <p>Bans:</p>
+                            <ul>
+                                {% for ban in u[3] %}
+                                    <li>{{ ban[0] }} ({{ ban[1] }}{% if ban[2] %} - Expires: {{ ban[2] }}{% endif %})</li>
+                                {% endfor %}
+                            </ul>
+                            <form method="POST" action="/admin" class="mb-2">
+                                <input type="hidden" name="action" value="issue_warning">
+                                <input type="hidden" name="user_id" value="{{ u[0] }}">
+                                <textarea name="reason" class="w-full p-2 mb-2 bg-gray-800 rounded" placeholder="Warning Reason" required maxlength="500"></textarea>
+                                <button type="submit" class="submit-btn">Issue Warning</button>
+                            </form>
+                            <form method="POST" action="/admin" class="mb-2">
+                                <input type="hidden" name="action" value="ban_user">
+                                <input type="hidden" name="user_id" value="{{ u[0] }}">
+                                <textarea name="reason" class="w-full p-2 mb-2 bg-gray-800 rounded" placeholder="Ban Reason" required maxlength="500"></textarea>
+                                <input type="number" name="duration" class="w-full p-2 mb-2 bg-gray-800 rounded" placeholder="Duration in days (optional)" min="0">
+                                <button type="submit" class="submit-btn">Ban User</button>
+                            </form>
+                            <form method="POST" action="/admin" class="inline">
+                                <input type="hidden" name="action" value="unban_user">
+                                <input type="hidden" name="user_id" value="{{ u[0] }}">
+                                <button type="submit" class="submit-btn">Unban User</button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            Portik Community | © 2025
+        </div>
+    </div>
+</body>
+</html>

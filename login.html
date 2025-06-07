@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portik - {{ 'Login' if lang == 'en' else 'Вход' }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .flash-message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .flash-success {
+            background-color: #4ade80;
+            color: #1a2e05;
+        }
+        .flash-error {
+            background-color: #f87171;
+            color: #450a0a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/60" alt="Portik Logo">
+                <h1 class="ml-4">Portik</h1>
+            </div>
+            <div class="nav">
+                <a href="{{ url_for('index') }}">{{ 'Home' if lang == 'en' else 'Главная' }}</a>
+                <a href="{{ url_for('switch_language', lang='en' if lang == 'ru' else 'ru') }}">
+                    {{ 'EN' if lang == 'ru' else 'RU' }}
+                </a>
+            </div>
+        </div>
+        <div class="table-container">
+            <div class="modal-content">
+                <h2>{{ 'Login / Register' if lang == 'en' else 'Вход / Регистрация' }}</h2>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <p class="flash-message flash-{{ 'success' if category == 'success' else 'error' }}">{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <form method="POST" action="{{ url_for('login') }}">
+                    <input type="text" name="username" class="w-full p-2 mb-2 bg-gray-800 rounded" placeholder="{{ 'Username' if lang == 'en' else 'Имя пользователя' }}" required maxlength="50">
+                    <input type="password" name="password" class="w-full p-2 mb-2 bg-gray-800 rounded" placeholder="{{ 'Password' if lang == 'en' else 'Пароль' }}" required maxlength="128">
+                    <div class="flex justify-between">
+                        <button type="submit" name="submit_login" class="register-btn">{{ 'Login' if lang == 'en' else 'Войти' }}</button>
+                        <button type="submit" name="submit_register" class="register-btn">{{ 'Register' if lang == 'en' else 'Зарегистрироваться' }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="footer">
+            Portik Community | © 2025
+        </div>
+    </div>
+</body>
+</html>
