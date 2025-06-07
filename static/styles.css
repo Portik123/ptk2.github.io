@@ -1,0 +1,254 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@400;600&display=swap');
+
+body {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    min-height: 100vh;
+    font-family: 'Roboto Mono', monospace;
+    color: #e2e8f0;
+    padding: 2rem;
+    overflow-x: hidden;
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(15, 23, 42, 0.95);
+    border-radius: 1rem;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+    overflow: hidden;
+}
+.header {
+    background: linear-gradient(to right, #3b82f6, #ec4899);
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+.header h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+.header img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+.nav a {
+    color: #a5b4fc;
+    margin-left: 1.5rem;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+.nav a:hover {
+    color: #ffffff;
+    text-shadow: 0 0 5px rgba(59, 130, 246, 0.6);
+}
+.table-container {
+    padding: 2rem;
+    overflow-x: auto;
+}
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.75rem;
+}
+th, td {
+    padding: 1rem;
+    background: rgba(30, 41, 59, 0.7);
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+th {
+    background: linear-gradient(to right, #1e40af, #db2777);
+    color: #ffffff;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+tr:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+    background: rgba(55, 65, 81, 0.9);
+}
+a {
+    color: #60a5fa;
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s ease;
+}
+a:hover {
+    color: #ffffff;
+    text-shadow: 0 0 5px #60a5fa;
+}
+a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background: #60a5fa;
+    transition: width 0.3s ease;
+}
+a:hover::after {
+    width: 100%;
+}
+.tag {
+    background: #1e40af;
+    color: #ffffff;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    margin-right: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.tag-folder {
+    background: #db2777;
+}
+.badge {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    margin-right: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #ffffff;
+    position: relative;
+    cursor: pointer;
+}
+.shop-badge {
+    background: #10b981;
+}
+.badge:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: -2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #ffffff;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.7rem;
+    white-space: nowrap;
+    z-index: 10;
+}
+.badge-image {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+    margin-right: 0.5rem;
+    border-radius: 0.25rem;
+}
+.badge-image:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: -2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #ffffff;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.7rem;
+    white-space: nowrap;
+    z-index: 10;
+}
+.type-file::before {
+    content: '📄';
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+}
+.type-folder::before {
+    content: '📁';
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+}
+.footer {
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    font-size: 0.9rem;
+    color: #94a3b8;
+}
+.register-btn {
+    background: linear-gradient(to right, #3b82f6, #ec4899);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.register-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.7);
+}
+.modal-content {
+    background: #1e293b;
+    padding: 2rem;
+    border-radius: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+}
+.modal-content h2 {
+    font-family: 'Orbitron', sans-serif;
+    color: #ffffff;
+    margin-bottom: 1rem;
+}
+input, select, textarea {
+    background: #1e293b;
+    color: #e2e8f0;
+    border: 1px solid #4b5563;
+}
+.chat-box {
+    border: 1px solid #4b5563;
+}
+@media (max-width: 768px) {
+    .container {
+        margin: 0 1rem;
+    }
+    th, td {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+    .header {
+        flex-direction: column;
+        text-align: center;
+    }
+    .nav {
+        margin-top: 1rem;
+    }
+    .nav a {
+        margin: 0 0.75rem;
+    }
+    .header img {
+        width: 50px;
+        height: 50px;
+    }
+    .table-container.flex {
+        flex-direction: column;
+    }
+    .table-container.flex > div {
+        width: 100% !important;
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+}
+@media (max-width: 640px) {
+    th, td {
+        font-size: 0.8rem;
+        padding: 0.5rem;
+    }
+    .header h1 {
+        font-size: 1.5rem;
+    }
+}
